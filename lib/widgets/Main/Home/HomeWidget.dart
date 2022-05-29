@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mydoctor/models/Facility.dart';
 import 'package:mydoctor/widgets/helpers/Card.dart';
 import 'package:mydoctor/widgets/helpers/Categories.dart';
 import 'package:mydoctor/widgets/helpers/Category.dart';
 import './atoms/NomalHome.dart';
+import 'package:mydoctor/helpers/db.dart';
 
 const OutlineInputBorder outlineInputBorder = OutlineInputBorder(
   borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -18,12 +20,67 @@ class HomeWidget extends StatefulWidget {
 
 class _HomeWidgetState extends State<HomeWidget> {
   bool istapped = false;
+  bool isFetchedd = false;
+  List<Facility_light> facilities = [];
   String searchedText = "";
   TextEditingController searchController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  Widget Findfacilities() {
+    if (!isFetchedd) {
+      db.FindFacilities(searchController.text).then((value) {
+        if (value.isNotEmpty) {
+          setState(() {
+            facilities = value;
+            isFetchedd = true;
+          });
+        } else {
+          setState(() {
+            facilities = [];
+            isFetchedd = true;
+          });
+        }
+      });
+      return Center(
+        child: Container(
+          child: Image.asset(
+            'assets/images/loading2.gif',
+            height: 80,
+          ),
+        ),
+      );
+    }
+    return Expanded(
+      flex: 2,
+      child: facilities.isEmpty
+          ? Column(
+              children: [
+                Container(
+                  child: Image.asset(
+                    'assets/images/Not_found.png',
+                  ),
+                ),
+                Text("Not Found")
+              ],
+            )
+          : GridView(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, childAspectRatio: 1.2),
+              children: [
+                ...facilities.map((element) {
+                  return MyCard(
+                      id: element.id,
+                      image: element.images.first,
+                      title: element.name);
+                })
+              ],
+            ),
+    );
+  }
+
   List<Widget> childHome() {
     if (istapped) {
-      return [Text(searchedText)];
+      return [Findfacilities()];
     }
     return helpers.normalHome();
   }
@@ -57,7 +114,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                   controller: searchController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Enter a valid data';
+                      return 'Enter a valid name';
                     }
                     return null;
                   },
@@ -76,6 +133,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                               if (_formKey.currentState!.validate()) {
                                 searchedText = searchController.text;
                                 setState(() {
+                                  isFetchedd = false;
                                   istapped = true;
                                 });
                               }

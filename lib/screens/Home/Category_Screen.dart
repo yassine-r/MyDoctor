@@ -3,18 +3,18 @@ import 'package:mydoctor/models/Facility.dart';
 import 'package:mydoctor/widgets/helpers/Card.dart';
 import 'package:mydoctor/helpers/db.dart';
 
-class PopularFacilities extends StatefulWidget {
-  const PopularFacilities({Key? key}) : super(key: key);
+class Category extends StatefulWidget {
+  const Category({Key? key}) : super(key: key);
 
   @override
-  State<PopularFacilities> createState() => _PopularFacilitiesState();
+  State<Category> createState() => _CategoryState();
 }
 
-class _PopularFacilitiesState extends State<PopularFacilities> {
+class _CategoryState extends State<Category> {
   bool isFetchedd = false;
   List<Facility_light> facilities = [];
 
-  Widget Popularfacilities() {
+  Widget Categoryfacilities() {
     if (!isFetchedd) {
       db.FetchPopularFacilities().then((value) {
         if (value != []) {
@@ -52,6 +52,6 @@ class _PopularFacilitiesState extends State<PopularFacilities> {
 
   @override
   Widget build(BuildContext context) {
-    return Popularfacilities();
+    return Categoryfacilities();
   }
 }

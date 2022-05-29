@@ -45,27 +45,14 @@ class _Facility_homeState extends State<Facility_home> {
             return Container(
               margin: EdgeInsets.all(10),
               child: Material(
-                elevation: 1,
+                elevation: 0,
+                color: Color.fromARGB(44, 255, 82, 82),
                 borderRadius: BorderRadius.circular(10),
                 child: ListTile(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   leading: Icon(Icons.account_circle),
                   subtitle: Text(e["date"]),
-                  trailing: IconButton(
-                      onPressed: () {
-                        db.DeleteOrder(e["id"]).then((value) {
-                          if (value == true) {
-                            setState(() {
-                              providedAccount.isChanged();
-                              setState(() {
-                                isFetched = false;
-                              });
-                            });
-                          }
-                        });
-                      },
-                      icon: Icon(Icons.delete)),
                   title: Text("Patient NR:${numberPatients}"),
                   onTap: () {
                     if (providedAccount.getIsFacility()) {
@@ -86,81 +73,6 @@ class _Facility_homeState extends State<Facility_home> {
         ],
       ),
     );
-  }
-
-  Widget Facility_widget(BuildContext context, Account providedAccount) {
-    if (!isFetched) {
-      return LinearProgressIndicator(
-        backgroundColor: Colors.white,
-      );
-    } else {
-      return Container(
-        height: 500,
-        child: ListView(
-          children: [
-            MyCarousel(images: facility.images),
-            Container(
-              padding: EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Email",
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 4, 121, 121),
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  Text(facility.email),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "Adresse",
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 4, 121, 121),
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(facility.address),
-                      MaterialButton(
-                        onPressed: () {
-                          MyMapLauncher.openMapsSheet(context, facility.name,
-                              facility.latitude, facility.longitude);
-                        },
-                        child: Text("see it on map"),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "Description",
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 4, 121, 121),
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  Text(facility.desription),
-                  Text(
-                    "Patients en attente",
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 4, 121, 121),
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  Patients(context, providedAccount),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    }
   }
 
   showAlertDialog(BuildContext context) {
@@ -354,5 +266,86 @@ class _Facility_homeState extends State<Facility_home> {
         child: Facility_widget(context, providedAccount),
       ),
     );
+  }
+
+  Widget buildTextField(String labelText, String placeholder, bool modify,
+      {int maxline = 1}) {
+    return Container(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: TextField(
+        maxLines: maxline,
+        decoration: InputDecoration(
+            enabled: modify,
+            filled: true,
+            fillColor: Color.fromARGB(168, 240, 240, 240),
+            border: outlineInputBorder,
+            enabledBorder: outlineInputBorder,
+            focusedBorder: outlineInputBorder,
+            errorBorder: outlineInputBorder,
+            labelText: labelText,
+            labelStyle: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: placeholder,
+            hintStyle: TextStyle(
+              fontSize: 14,
+              color: Colors.black,
+            )),
+      ),
+    );
+  }
+
+  Widget Facility_widget(BuildContext context, Account providedAccount) {
+    bool modify = false;
+    double height = (MediaQuery.of(context).size.height -
+        MediaQuery.of(context).padding.top -
+        MediaQuery.of(context).padding.bottom -
+        40);
+    if (!isFetched) {
+      return LinearProgressIndicator(
+        backgroundColor: Colors.white,
+      );
+    } else {
+      return Container(
+        height: height,
+        padding: EdgeInsets.only(left: 16, top: 0, right: 16),
+        child: ListView(
+          children: [
+            SizedBox(
+              height: 35,
+            ),
+            !modify
+                ? Center(
+                    child: Image.asset(
+                    "assets/images/hospital_profile.png",
+                    height: 200,
+                  ))
+                : Container(),
+            buildTextField("Name", facility.name, modify),
+            buildTextField("Phone", "0" + facility.phone.toString(), modify),
+            buildTextField("E-mail", facility.email, modify),
+            buildTextField("Address", facility.address, modify),
+            buildTextField("Consultation Price",
+                facility.price.toString() + " mad", modify),
+            buildTextField("ratting", facility.ratting.toString(), modify),
+            buildTextField("Description", facility.desription, modify),
+            Text(
+              "Appointments",
+              style: TextStyle(fontSize: 20),
+            ),
+            facility.orders.isEmpty
+                ? Center(
+                    child: Image.asset(
+                    "assets/images/empty.png",
+                    height: 200,
+                  ))
+                : Patients(context, providedAccount),
+          ],
+        ),
+      );
+    }
   }
 }

@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:mydoctor/models/Facility.dart';
+import 'package:mydoctor/models/Order.dart';
+import 'package:mydoctor/models/Patient.dart';
 
 extension IsOk on http.Response {
   bool get ok {
@@ -10,8 +12,8 @@ extension IsOk on http.Response {
 }
 
 class db {
-  static String APIurl = "https://whale-app-92568.ondigitalocean.app/api/";
-  // static String APIurl = "https://mydoctorapi-etx9d.ondigitalocean.app/api/";
+  static String APIurl = "https://seal-app-kmczw.ondigitalocean.app/api/";
+  // static String APIurl = "http://127.0.0.1:8000/api/";
 
   static Future<Map<String, String>> login(Map<String?, String?> data) async {
     logout();
@@ -50,6 +52,7 @@ class db {
         'address': data["address"],
         'phone': int.parse(data["phone"]!),
         'Description': data["Description"],
+        'categories': data["categories"],
         'latitude': double.parse(data["latitude"]!),
         'longitude': double.parse(data["longitude"]!),
         'ratting': 0,
@@ -131,6 +134,33 @@ class db {
     return Facility();
   }
 
+  static Future<Patient> FetchPatient(String id) async {
+    var url = Uri.parse(db.APIurl + 'patients/${id}/');
+
+    try {
+      var response = await http.get(url);
+      var decoded_response = jsonDecode(response.body);
+      if (response.ok) {
+        Patient patient = Patient(
+          id: decoded_response['id'],
+          first_name: decoded_response['first_name'],
+          last_name: decoded_response['last_name'],
+          email: decoded_response['email'],
+          phone: decoded_response['phone'],
+          age: decoded_response['age'],
+          address: decoded_response['address'],
+          latitude: decoded_response['latitude'],
+          longitude: decoded_response['longitude'],
+        );
+        patient.setOrders(decoded_response['orders']);
+        return patient;
+      }
+    } catch (error) {
+      print(error);
+    }
+    return Patient();
+  }
+
   static Future<List<Facility_light>> FetchPopularFacilities() async {
     var url = Uri.parse(db.APIurl + 'facilities/popular/');
     List<Facility_light> facilities = [];
@@ -152,6 +182,75 @@ class db {
       print(error);
     }
     return facilities;
+  }
+
+  static Future<List<Facility_light>> FindFacilities(String text) async {
+    var url = Uri.parse(db.APIurl + 'facilities/find/$text');
+    List<Facility_light> facilities = [];
+
+    try {
+      var response = await http.get(url);
+      var decoded_response = jsonDecode(response.body);
+      if (response.ok) {
+        for (var response_facility in decoded_response) {
+          Facility_light facility = Facility_light(
+            id: response_facility['id'],
+            name: response_facility['name'],
+            address: response_facility['address'],
+          );
+          facilities.add(facility);
+        }
+      }
+    } catch (error) {
+      print(error);
+    }
+    return facilities;
+  }
+
+  static Future<List<Facility_light>> FindCategoryFacilities(
+      String text) async {
+    var url = Uri.parse(db.APIurl + 'facilities/category/$text');
+    List<Facility_light> facilities = [];
+
+    try {
+      var response = await http.get(url);
+      var decoded_response = jsonDecode(response.body);
+      if (response.ok) {
+        for (var response_facility in decoded_response) {
+          Facility_light facility = Facility_light(
+            id: response_facility['id'],
+            name: response_facility['name'],
+            address: response_facility['address'],
+          );
+          facilities.add(facility);
+        }
+      }
+    } catch (error) {
+      print(error);
+    }
+    return facilities;
+  }
+
+  static Future<Order> FetchOrder(String id) async {
+    var url = Uri.parse(db.APIurl + 'orders/${id}/');
+
+    try {
+      var response = await http.get(url);
+      var decoded_response = jsonDecode(response.body);
+      if (response.ok) {
+        Order order = Order(
+          id: decoded_response['id'],
+          description: decoded_response['Description'],
+          date: decoded_response['date'],
+          patient: decoded_response['patient'],
+          facility: decoded_response['facility'],
+        );
+        return order;
+      }
+    } catch (error) {
+      print(error);
+    }
+    return Order();
   }
 
   static Future<bool> DeleteOrder(String id) async {

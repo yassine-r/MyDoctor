@@ -1,6 +1,9 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:mydoctor/helpers/fct.dart';
 import 'package:mydoctor/helpers/localisation.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
+
 import 'package:mydoctor/providers/account.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +29,19 @@ class _FacilityRegistrationState extends State<FacilityRegistration> {
   TextEditingController priceController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  static List<String> _categories = [
+    "Heart",
+    "leg",
+    "brain",
+    "eye",
+    "ears",
+    "gp",
+    "hioj"
+  ];
+  List<String> _selectedcategories = [];
+  final _items = _categories
+      .map((category) => MultiSelectItem<String>(category, category))
+      .toList();
 
   bool ispressed = false;
   bool isSent = false;
@@ -216,6 +232,34 @@ class _FacilityRegistrationState extends State<FacilityRegistration> {
                     ),
                     Container(
                       padding: const EdgeInsets.all(10),
+                      child: MultiSelectDialogField(
+                        items: _items,
+                        title: Container(
+                            padding: EdgeInsets.all(10),
+                            child: Text("Categoies")),
+                        selectedColor: Colors.teal[700],
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(168, 240, 240, 240),
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                        buttonIcon: Icon(
+                          Icons.face,
+                          color: Colors.grey.shade600,
+                        ),
+                        buttonText: Text(
+                          "Domain fields",
+                          style: TextStyle(
+                            color: Colors.grey.shade700,
+                            fontSize: 16,
+                          ),
+                        ),
+                        onConfirm: (results) {
+                          _selectedcategories = results as List<String>;
+                        },
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
                       child: TextFormField(
                         maxLines: 5,
                         keyboardType: TextInputType.multiline,
@@ -282,6 +326,8 @@ class _FacilityRegistrationState extends State<FacilityRegistration> {
                                       print(creedentials["latitude"]);
                                       creedentials["longitude"] =
                                           value.longitude.toString();
+                                      creedentials["categories"] =
+                                          fct.getString(_selectedcategories);
                                       setState(() {
                                         ispressed = true;
                                       });

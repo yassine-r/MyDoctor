@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mydoctor/providers/account.dart';
-import 'package:mydoctor/screens/Home/HomeScreen.dart';
 import 'package:mydoctor/screens/Profile/ProfileScreen.dart';
+import 'package:mydoctor/widgets/Main/Home/HomeWidget.dart';
 import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
@@ -16,7 +16,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   var _currentIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String snackBarText = "";
-  List<Widget> screens = [HomeScreen(), ProfileScreen()];
+  List<Widget> screens = [HomeWidget(), ProfileScreen()];
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
