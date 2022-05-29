@@ -142,8 +142,13 @@ class _FacilityProfileState extends State<FacilityProfile> {
           providedAccount.setId("");
         }
       });
-      return LinearProgressIndicator(
-        backgroundColor: Colors.white,
+      return Center(
+        child: Container(
+          child: Image.asset(
+            'assets/images/loading2.gif',
+            height: 80,
+          ),
+        ),
       );
     } else {
       return Container(

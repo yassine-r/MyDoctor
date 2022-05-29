@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mydoctor/widgets/Main/Profile/Facility/atoms/ClosetsFacilities.dart';
 import 'package:mydoctor/widgets/Main/Profile/Facility/atoms/PopularFacilities.dart';
 import 'package:mydoctor/widgets/helpers/Card.dart';
-import 'package:mydoctor/widgets/helpers/Categories.dart';
 import 'package:mydoctor/widgets/helpers/Category.dart';
 
 class helpers {
@@ -16,16 +15,20 @@ class helpers {
         ),
       ),
       SizedBox(
-        height: 90,
+        height: 50,
         child: ListView(scrollDirection: Axis.horizontal, children: [
-          Category(),
-          Category(),
-          Category(),
-          Category(),
-          Category(),
-          Category(),
-          Category(),
-          Category(),
+          Category(
+            icon: Icons.heart_broken_rounded,
+            text: "Heart",
+          ),
+          Category(
+            icon: Icons.remove_red_eye,
+            text: "Eye",
+          ),
+          Category(
+            icon: Icons.hearing,
+            text: "Ear",
+          ),
         ]),
       ),
       Container(

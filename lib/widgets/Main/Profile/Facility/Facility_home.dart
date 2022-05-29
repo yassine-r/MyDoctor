@@ -324,8 +324,13 @@ class _Facility_homeState extends State<Facility_home> {
         MediaQuery.of(context).padding.bottom -
         40);
     if (!isFetched) {
-      return LinearProgressIndicator(
-        backgroundColor: Colors.white,
+      return Center(
+        child: Container(
+          child: Image.asset(
+            'assets/images/loading2.gif',
+            height: 80,
+          ),
+        ),
       );
     } else {
       return Container(

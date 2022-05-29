@@ -331,8 +331,13 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                   ],
                 ),
               )
-            : LinearProgressIndicator(
-                backgroundColor: Colors.white,
+            : Center(
+                child: Container(
+                  child: Image.asset(
+                    'assets/images/loading2.gif',
+                    height: 80,
+                  ),
+                ),
               ));
   }
 }

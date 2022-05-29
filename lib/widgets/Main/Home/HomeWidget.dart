@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mydoctor/models/Facility.dart';
 import 'package:mydoctor/widgets/helpers/Card.dart';
-import 'package:mydoctor/widgets/helpers/Categories.dart';
 import 'package:mydoctor/widgets/helpers/Category.dart';
 import './atoms/NomalHome.dart';
 import 'package:mydoctor/helpers/db.dart';
