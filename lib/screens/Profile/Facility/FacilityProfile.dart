@@ -275,8 +275,23 @@ class _FacilityProfileState extends State<FacilityProfile> {
                                         right: 10,
                                         left: 10,
                                         bottom: 10),
+                                    child: buildTextField(
+                                        "Description", order.description, false,
+                                        maxline: 5),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                        top: 0,
+                                        right: 10,
+                                        left: 10,
+                                        bottom: 10),
                                     child: TextButton(
-                                      child: Text("Patient details"),
+                                      child: Text(
+                                        "Patient details",
+                                        style: TextStyle(
+                                            color: Colors.grey.shade900,
+                                            fontWeight: FontWeight.w600),
+                                      ),
                                       onPressed: () {
                                         db.FetchPatient(order.patient)
                                             .then((patient) {
@@ -373,7 +388,7 @@ class _FacilityProfileState extends State<FacilityProfile> {
                                                                     left: 10,
                                                                     bottom: 10),
                                                             child: buildTextField(
-                                                                "Patient Phone",
+                                                                "Patient Email",
                                                                 patient.email,
                                                                 false),
                                                           ),
@@ -397,16 +412,6 @@ class _FacilityProfileState extends State<FacilityProfile> {
                                         });
                                       },
                                     ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.only(
-                                        top: 0,
-                                        right: 10,
-                                        left: 10,
-                                        bottom: 10),
-                                    child: buildTextField(
-                                        "Description", order.description, false,
-                                        maxline: 5),
                                   ),
                                 ],
                               ),

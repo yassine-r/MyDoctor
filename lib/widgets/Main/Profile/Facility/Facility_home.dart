@@ -54,11 +54,6 @@ class _Facility_homeState extends State<Facility_home> {
                   leading: Icon(Icons.account_circle),
                   subtitle: Text(e["date"]),
                   title: Text("Patient NR:${numberPatients}"),
-                  onTap: () {
-                    if (providedAccount.getIsFacility()) {
-                      print(e["id"]);
-                    }
-                  },
                 ),
               ),
             );
@@ -116,150 +111,174 @@ class _Facility_homeState extends State<Facility_home> {
           facility.name,
           style: TextStyle(fontSize: 20, color: Colors.grey.shade800),
         ),
-        centerTitle: true,
+        centerTitle: false,
         elevation: 0,
         actions: [
-          MaterialButton(
-            child: Text("Create Order"),
-            onPressed: () {
-              if (providedAccount.getcanCreateOrder() == false) {
-                showAlertDialog(context);
-              } else {
-                showModalBottomSheet<void>(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    topRight: Radius.circular(15),
-                  )),
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Container(
-                      decoration: BoxDecoration(),
-                      height: 350,
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                                padding: const EdgeInsets.all(10),
-                                margin: EdgeInsets.all(10),
-                                child: const Text(
-                                  'Create Order',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                )),
-                            Container(
-                              margin: EdgeInsets.only(top: 10),
-                              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                              child: TextButton.icon(
-                                  icon: Icon(Icons.date_range_rounded,
-                                      color: Colors.grey.shade900),
-                                  onPressed: () {
-                                    DatePicker.showDateTimePicker(context,
-                                        showTitleActions: true,
-                                        minTime: DateTime.now(),
-                                        maxTime: DateTime(2023, 12, 31),
-                                        onConfirm: (date) {
-                                      setState(() {
-                                        selected_date = date.toString();
-                                      });
-                                    },
-                                        currentTime: DateTime.now(),
-                                        locale: LocaleType.en);
-                                  },
-                                  label: Text(
-                                    selected_date,
-                                    style: TextStyle(
-                                        color: Colors.grey.shade900,
-                                        fontSize: 18),
-                                  )),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              child: TextFormField(
-                                maxLines: 5,
-                                keyboardType: TextInputType.multiline,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Enter a valid data';
-                                  }
-                                  return null;
-                                },
-                                controller: descriptionController,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Color.fromARGB(168, 240, 240, 240),
-                                  hintText: "Description ...",
-                                  border: outlineInputBorder,
-                                  enabledBorder: outlineInputBorder,
-                                  focusedBorder: outlineInputBorder,
-                                  errorBorder: outlineInputBorder,
-                                ),
+          isFetched
+              ? MaterialButton(
+                  onPressed: () {
+                    MyMapLauncher.openMapsSheet(context, facility.name,
+                        facility.latitude, facility.longitude);
+                  },
+                  child: Text(
+                    "See it on Map",
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                )
+              : Container(),
+          isFetched
+              ? MaterialButton(
+                  child: Text(
+                    "Create Order",
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  onPressed: () {
+                    if (providedAccount.getcanCreateOrder() == false) {
+                      showAlertDialog(context);
+                    } else {
+                      showModalBottomSheet<void>(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                        )),
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Container(
+                            decoration: BoxDecoration(),
+                            height: 350,
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                      padding: const EdgeInsets.all(10),
+                                      margin: EdgeInsets.all(10),
+                                      child: const Text(
+                                        'Create Order',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      )),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 10),
+                                    padding:
+                                        const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    child: TextButton.icon(
+                                        icon: Icon(Icons.date_range_rounded,
+                                            color: Colors.grey.shade900),
+                                        onPressed: () {
+                                          DatePicker.showDateTimePicker(context,
+                                              showTitleActions: true,
+                                              minTime: DateTime.now(),
+                                              maxTime: DateTime(2023, 12, 31),
+                                              onConfirm: (date) {
+                                            setState(() {
+                                              selected_date = date.toString();
+                                            });
+                                          },
+                                              currentTime: DateTime.now(),
+                                              locale: LocaleType.en);
+                                        },
+                                        label: Text(
+                                          selected_date,
+                                          style: TextStyle(
+                                              color: Colors.grey.shade900,
+                                              fontSize: 18),
+                                        )),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    child: TextFormField(
+                                      maxLines: 5,
+                                      keyboardType: TextInputType.multiline,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Enter a valid data';
+                                        }
+                                        return null;
+                                      },
+                                      controller: descriptionController,
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor:
+                                            Color.fromARGB(168, 240, 240, 240),
+                                        hintText: "Description ...",
+                                        border: outlineInputBorder,
+                                        enabledBorder: outlineInputBorder,
+                                        focusedBorder: outlineInputBorder,
+                                        errorBorder: outlineInputBorder,
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(top: 10),
+                                        height: 50,
+                                        width: 150,
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 0, 10, 0),
+                                        child: ElevatedButton(
+                                          onPressed: () async {
+                                            if (_formKey.currentState!
+                                                    .validate() &&
+                                                selected_date !=
+                                                    "select date") {
+                                              creedentials["Description"] =
+                                                  descriptionController.text;
+                                              creedentials["date"] =
+                                                  selected_date;
+                                              creedentials["patient"] =
+                                                  providedAccount.getid();
+                                              creedentials["facility"] =
+                                                  widget.id;
+                                              await db.CreateOrder(creedentials)
+                                                  .then((value) {
+                                                if (value) {
+                                                  print(creedentials);
+                                                  Navigator.pop(context);
+                                                  setState(() {
+                                                    isFetched = false;
+                                                  });
+                                                } else {
+                                                  setState(() {
+                                                    descriptionController.text =
+                                                        "Error";
+                                                  });
+                                                }
+                                              });
+                                            } else {
+                                              setState(() {
+                                                descriptionController.text =
+                                                    "Select a valid date";
+                                              });
+                                            }
+                                          },
+                                          child: Text('Register'),
+                                          style: ElevatedButton.styleFrom(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              primary: Colors.redAccent,
+                                              elevation: 0),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
                               ),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(top: 10),
-                                  height: 50,
-                                  width: 150,
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                  child: ElevatedButton(
-                                    onPressed: () async {
-                                      if (_formKey.currentState!.validate() &&
-                                          selected_date != "select date") {
-                                        creedentials["Description"] =
-                                            descriptionController.text;
-                                        creedentials["date"] = selected_date;
-                                        creedentials["patient"] =
-                                            providedAccount.getid();
-                                        creedentials["facility"] = widget.id;
-                                        await db.CreateOrder(creedentials)
-                                            .then((value) {
-                                          if (value) {
-                                            print(creedentials);
-                                            Navigator.pop(context);
-                                            setState(() {
-                                              isFetched = false;
-                                            });
-                                          } else {
-                                            setState(() {
-                                              descriptionController.text =
-                                                  "Error";
-                                            });
-                                          }
-                                        });
-                                      } else {
-                                        setState(() {
-                                          descriptionController.text =
-                                              "Select a valid date";
-                                        });
-                                      }
-                                    },
-                                    child: Text('Register'),
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        primary: Colors.redAccent,
-                                        elevation: 0),
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    );
+                          );
+                        },
+                      );
+                    }
                   },
-                );
-              }
-            },
-          ),
+                )
+              : Container(),
         ],
       ),
       body: Container(

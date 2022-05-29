@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mydoctor/models/Order.dart';
 import 'package:mydoctor/models/Patient.dart';
 import 'package:mydoctor/providers/account.dart';
 import 'package:provider/provider.dart';
@@ -134,7 +135,7 @@ class _PatientProfileState extends State<PatientProfile> {
             buildTextField("Adress", patient.address, modify),
             !modify
                 ? Text(
-                    "Orders",
+                    "My Appointements",
                     style: TextStyle(fontSize: 20),
                   )
                 : Container(),
@@ -167,10 +168,12 @@ class _PatientProfileState extends State<PatientProfile> {
     }
   }
 
-  Widget buildTextField(String labelText, String placeholder, bool modify) {
+  Widget buildTextField(String labelText, String placeholder, bool modify,
+      {int maxline = 1}) {
     return Container(
       padding: const EdgeInsets.only(bottom: 15),
       child: TextField(
+        maxLines: maxline,
         decoration: InputDecoration(
             enabled: modify,
             filled: true,
@@ -202,7 +205,8 @@ class _PatientProfileState extends State<PatientProfile> {
           return Container(
             margin: EdgeInsets.all(10),
             child: Material(
-              elevation: 1,
+              elevation: 0,
+              color: Color.fromARGB(44, 255, 82, 82),
               borderRadius: BorderRadius.circular(10),
               child: ListTile(
                 shape: RoundedRectangleBorder(
@@ -223,11 +227,181 @@ class _PatientProfileState extends State<PatientProfile> {
                       });
                     },
                     icon: Icon(Icons.delete)),
-                title: Text("Order NR:1"),
+                title: Text("Appointment NR:1"),
                 onTap: () {
-                  if (providedAccount.getIsFacility()) {
-                    print(e["id"]);
-                  }
+                  Order order = Order();
+                  db.FetchOrder(e["id"]).then((value) {
+                    order = value;
+                    if (order.patient != "") {
+                      showModalBottomSheet<void>(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                        )),
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Container(
+                            decoration: BoxDecoration(),
+                            height: 500,
+                            child: ListView(
+                              children: <Widget>[
+                                Container(
+                                    padding: const EdgeInsets.all(10),
+                                    margin: EdgeInsets.all(10),
+                                    child: Text(
+                                      'Appointment details',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color:
+                                              Color.fromARGB(197, 255, 82, 82),
+                                          fontWeight: FontWeight.w700),
+                                    )),
+                                Container(
+                                  padding: const EdgeInsets.only(
+                                      top: 0, right: 10, left: 10, bottom: 0),
+                                  child:
+                                      buildTextField("Date", order.date, false),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.only(
+                                      top: 0, right: 10, left: 10, bottom: 10),
+                                  child: buildTextField(
+                                      "Description", order.description, false,
+                                      maxline: 5),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.only(
+                                      top: 0, right: 10, left: 10, bottom: 10),
+                                  child: TextButton(
+                                    child: Text(
+                                      "Hospital details",
+                                      style: TextStyle(
+                                          color: Colors.grey.shade900,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    onPressed: () {
+                                      db.FetchFacility(order.facility)
+                                          .then((facility) {
+                                        if (facility.name != "") {
+                                          showModalBottomSheet<void>(
+                                              context: context,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                topLeft: Radius.circular(15),
+                                                topRight: Radius.circular(15),
+                                              )),
+                                              builder: (BuildContext context) {
+                                                return Container(
+                                                    decoration: BoxDecoration(),
+                                                    height: 500,
+                                                    child: ListView(
+                                                      children: <Widget>[
+                                                        Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(10),
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                                    10),
+                                                            child: Text(
+                                                              'Facility details',
+                                                              style: TextStyle(
+                                                                  fontSize: 18,
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          197,
+                                                                          255,
+                                                                          82,
+                                                                          82),
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700),
+                                                            )),
+                                                        Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 0,
+                                                                  right: 10,
+                                                                  left: 10,
+                                                                  bottom: 10),
+                                                          child: buildTextField(
+                                                              "facility Name",
+                                                              facility.name,
+                                                              false),
+                                                        ),
+                                                        Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 0,
+                                                                  right: 10,
+                                                                  left: 10,
+                                                                  bottom: 10),
+                                                          child: buildTextField(
+                                                              "Patient Consultation price",
+                                                              facility.price
+                                                                  .toString(),
+                                                              false),
+                                                        ),
+                                                        Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 0,
+                                                                  right: 10,
+                                                                  left: 10,
+                                                                  bottom: 10),
+                                                          child: buildTextField(
+                                                              "Facility Phone",
+                                                              "0" +
+                                                                  facility.phone
+                                                                      .toString(),
+                                                              false),
+                                                        ),
+                                                        Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 0,
+                                                                  right: 10,
+                                                                  left: 10,
+                                                                  bottom: 10),
+                                                          child: buildTextField(
+                                                              "Facility Email",
+                                                              facility.email,
+                                                              false),
+                                                        ),
+                                                        Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 0,
+                                                                  right: 10,
+                                                                  left: 10,
+                                                                  bottom: 10),
+                                                          child: buildTextField(
+                                                              "Facility address",
+                                                              facility.address,
+                                                              false),
+                                                        ),
+                                                      ],
+                                                    ));
+                                              });
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  });
                 },
               ),
             ),
